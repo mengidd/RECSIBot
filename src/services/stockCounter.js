@@ -109,8 +109,8 @@ const updateCountFromMessages = async (messages) => {
 const updateCountFromMessage = async (message) => {
     if (message.author.bot === true) return
 
-    // Check if the message starts with a number. Any number like 1000, 100.000, 1.000.00.0.1, 200k will work
-    const numberMatch = message.content.match(/^(\d+(\.\d+)*)k?/i)
+    // Check if the message starts with a number. Any number like 1000, 10 000, 100.000, 1.000.001, 200k will work
+    const numberMatch = message.content.match(/^(\d+((\.| )\d+)*)k?/i)
     if (numberMatch === null) return
     
     const isBanned = await BannedUser.findOne({ where: { userId: message.author.id }})
@@ -129,7 +129,12 @@ const updateCountFromMessage = async (message) => {
     // If we already had a count that was posted later than the candidate, just return
     if (user.countTimestamp >= message.createdTimestamp) return
 
-    const number = parseInt(numberMatch[0].replace(/k/i, '000').replace('.', ''))
+    const number = parseInt(
+        numberMatch[0]
+            .replace(/k/i, '000')
+            .replace('.', '')
+            .replace(' ', '')
+        )
 
     if (number >= 420625659) return // Skip guaranteed troll
 
