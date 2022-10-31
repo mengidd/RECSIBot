@@ -5,16 +5,21 @@ const { MessageHistoryTail, User, Setting, BannedUser } = models
 
 let scheduler
 let isCounting = false
+let currentStockCountChannel
 
 /**
  * Returns the channel that is currently set as the channel to count in
  */
-const getStockCountChannel = async () => {
+const getStockCountChannel = async (refreshCache = false) => {
+    if (currentStockCountChannel && !refreshCache) return currentStockCountChannel
+
     const channelSetting = await Setting.getSetting('counterChannelId')
     if (! channelSetting) return null
 
     const channel = await client.channels.fetch(channelSetting)
     if (! channel) return null
+
+    currentStockCountChannel = channel
 
     return channel
 }
