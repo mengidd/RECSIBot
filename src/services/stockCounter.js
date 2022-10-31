@@ -129,9 +129,11 @@ const updateCountFromMessage = async (message) => {
     // If we already had a count that was posted later than the candidate, just return
     if (user.countTimestamp >= message.createdTimestamp) return
 
-    const number = numberMatch[0].replace(/k/i, '000').replace('.', '')
+    const number = parseInt(numberMatch[0].replace(/k/i, '000').replace('.', ''))
 
-    if (number == '0') {
+    if (number >= 420625659) return // Skip guaranteed troll
+
+    if (number === 0) {
         user.destroy()
         return
     }
